@@ -9,6 +9,8 @@ import java.util.function.Function;
  */
 public class MillisecondMap<T> {
 
+	/** The Mapping Function.
+	 */
 	final Function<Calendar, T> mMap;
 
 	/** Create a new Map.
