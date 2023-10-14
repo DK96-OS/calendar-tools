@@ -1,6 +1,8 @@
 package calendartools.map;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /** Provider of Test Data.
  */
@@ -24,6 +26,17 @@ public class TestDataProvider {
 			result[i] = cal.getTimeInMillis();
 		}
 		return result;
+	}
+
+	/** Target Week 1 is October 16 to 22, 2023.
+	 * @return A List of Time values.
+	 */
+	public static List<Long> getTargetWeek1List() {
+		var array = getTargetWeek1();
+		var list = new ArrayList<Long>(7);
+		for (long t : array)
+			list.add(t);
+		return list;
 	}
 
 }

@@ -44,7 +44,7 @@ public final class MillisecondMapTest {
 
 	@Test
 	public void testMapList_TargetWeek1_ReturnsDaysOfWeek() {
-		var targetWeek1 = TestDataProvider.getTargetWeek1();
+		var targetWeek1 = TestDataProvider.getTargetWeek1List();
 		assertEquals(
 			expectedDaysOfWeek,
 			mInstance.map(targetWeek1)
