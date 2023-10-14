@@ -1,0 +1,56 @@
+plugins {
+    id "java-library"
+    id "jacoco"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = "io.github.dk96-os.calendar-tools"
+            artifactId = "map"
+            version = "0.1"
+            from components.java
+        }
+    }
+}
+
+tasks.test {
+    maxParallelForks = 3
+}
+
+tasks.jacocoTestReport {
+    dependsOn tasks.test
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoReport")
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn tasks.test
+    violationRules {
+        failOnViolation = true
+        rule {
+            limit {
+                counter = "INSTRUCTION"
+                minimum = 0.986
+            }
+            limit {
+                counter = "BRANCH"
+                minimum = 0.957
+            }
+        }
+    }
+}
