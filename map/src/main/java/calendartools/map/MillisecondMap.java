@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.function.Function;
 
-/**
+/** A Calendar-assisted map that takes Milliseconds since epoch as input.
  */
 public class MillisecondMap<T> {
 
