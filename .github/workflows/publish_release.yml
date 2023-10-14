@@ -27,12 +27,7 @@ jobs:
         timeout-minutes: 7
 
       - name: Generate JavaDoc
-        run: ./gradlew dokkaJavadoc --warn
-        if: success()
-        timeout-minutes: 3
-
-      - name: Generate Markdown
-        run: ./gradlew dokkaGfm --warn
+        run: ./gradlew javadoc --warn
         if: success()
         timeout-minutes: 3
 
