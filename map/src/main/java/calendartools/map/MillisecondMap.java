@@ -2,7 +2,7 @@ package calendartools.map;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Function;
 
 /** A Calendar-assisted map that takes Milliseconds since epoch as input.
@@ -44,7 +44,7 @@ public class MillisecondMap<T> {
 	 * @return An ArrayList of Output Data.
 	 */
 	public ArrayList<T> map(
-		final List<Long> millisecondValues
+		final Collection<Long> millisecondValues
 	) {
 		var result = new ArrayList<T>();
 		var calendar = Calendar.getInstance();
