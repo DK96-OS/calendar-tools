@@ -19,7 +19,7 @@ publishing {
         maven(MavenPublication) {
             groupId = "io.github.dk96-os.calendar-tools"
             artifactId = "map"
-            version = "0.1"
+            version = "0.2"
             from components.java
         }
     }
