@@ -58,6 +58,15 @@ public final class WeeklyChecklistTest {
 	}
 
 	@Test
+	public void testConstructor_NoDayChecked() {
+		var builder = new WeeklyChecklistBuilder();
+		var instance = builder.get();
+		assertEquals(
+			0, instance.mData
+		);
+	}
+
+	@Test
 	public void testConstructor_Only3DaysChecked() {
 		final int[] checkedDays = new int[]{
 			Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.SATURDAY
