@@ -4,7 +4,7 @@ package calendartools.data;
  * The checklist utilizes a compact representation for optimal memory efficiency.
  * The Constants used are related to DAY_OF_WEEK in Java Util Calendar.
  */
-public final class WeeklyChecklist {
+public class WeeklyChecklist {
 
 	/** The compact representation of the checklist.
 	 */
@@ -53,7 +53,7 @@ public final class WeeklyChecklist {
 	/** Only used internally to avoid unnecessary checks.
 	 * @param data The compact representation of the checklist.
 	 */
-	private WeeklyChecklist(
+	protected WeeklyChecklist(
 		final byte data
 	) {
 		mData = data;
@@ -63,7 +63,7 @@ public final class WeeklyChecklist {
 	 * @param dayOfWeek The given Day Of Week, from Calendar.DAY_OF_WEEK.
 	 * @return True if day of week is selected. Undefined, if input is invalid.
 	 */
-	public boolean getDayOfWeek(
+	public final boolean getDayOfWeek(
 		final int dayOfWeek
 	) {
 		return (
@@ -77,7 +77,7 @@ public final class WeeklyChecklist {
 	 * @param dayOfWeek The given Day Of Week, from Calendar.DAY_OF_WEEK.
 	 * @return A WeeklyChecklist with the updated status.
 	 */
-	public WeeklyChecklist updateDayOfWeek(
+	public final WeeklyChecklist updateDayOfWeek(
 		final int dayOfWeek
 	) {
 		// Check for invalid input.
@@ -92,4 +92,11 @@ public final class WeeklyChecklist {
 		return new WeeklyChecklist(newData);
 	}
 
+	@Override
+	public boolean equals(
+		final Object obj
+	) {
+		return obj instanceof WeeklyChecklist &&
+			((WeeklyChecklist) obj).mData == mData;
+	}
 }

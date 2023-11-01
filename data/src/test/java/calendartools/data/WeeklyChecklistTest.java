@@ -127,4 +127,73 @@ public final class WeeklyChecklistTest {
 		}
 	}
 
+	@Test
+	public void testEquals_AllTrue_SameInstance_ReturnsTrue() {
+		assertEquals(
+			checklistAllTrue,
+			checklistAllTrue
+		);
+	}
+
+	@Test
+	public void testEquals_AllTrue_NewInstance_ReturnsTrue() {
+		assertEquals(
+			checklistAllTrue,
+			new WeeklyChecklist(true)
+		);
+	}
+
+	@Test
+	public void testEquals_AllFalse_SameInstance_ReturnsTrue() {
+		assertEquals(
+			checklistAllFalse,
+			checklistAllFalse
+		);
+	}
+
+	@Test
+	public void testEquals_AllFalse_NewInstance_ReturnsTrue() {
+		assertEquals(
+			checklistAllFalse,
+			new WeeklyChecklist(false)
+		);
+	}
+
+	@Test
+	public void testEquals_AllTrue_AllFalse_ReturnsFalse() {
+		assertNotEquals(
+			checklistAllTrue,
+			checklistAllFalse
+		);
+	}
+
+	@Test
+	public void testEquals_AllTrue_Modified_ReturnsFalse() {
+		// Modify one day at a time from the AllTrue checklist
+		for (int day = Calendar.SUNDAY; day <= Calendar.SATURDAY; ++day) {
+			assertNotEquals(
+				checklistAllTrue,
+				checklistAllTrue.updateDayOfWeek(day)
+			);
+		}
+	}
+
+	@Test
+	public void testEquals_AllFalse_Modified_ReturnsFalse() {
+		// Modify one day at a time from the AllTrue checklist
+		for (int day = Calendar.SUNDAY; day <= Calendar.SATURDAY; ++day) {
+			assertNotEquals(
+				checklistAllFalse,
+				checklistAllFalse.updateDayOfWeek(day)
+			);
+		}
+	}
+
+	@Test
+	public void testEquals_Null_ReturnsFalse() {
+		assertNotEquals(
+			checklistAllTrue, null
+		);
+	}
+
 }
