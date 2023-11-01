@@ -23,8 +23,8 @@ jobs:
           cache: 'gradle'
 
       - name: Check Build
-        run: ./gradlew check --warn
-        timeout-minutes: 7
+        run: ./gradlew assemble --warn
+        timeout-minutes: 6
 
       - name: Generate JavaDoc
         run: ./gradlew javadoc --warn
@@ -44,4 +44,4 @@ jobs:
           name: MT-JavaDocs
           path: /home/runner/work/*/*/*/build/dokka/
           retention-days: 60
-        timeout-minutes: 1
+        timeout-minutes: 2

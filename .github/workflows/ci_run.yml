@@ -26,8 +26,13 @@ jobs:
         java-version: 17
         distribution: 'temurin'
         cache: 'gradle'
-    - name: Build
-      run: ./gradlew assemble --info
+
+    - name: Build Source
+      run: ./gradlew assemble --warn
+      timeout-minutes: 4
+
+    - name: Build Test Classes
+      run: ./gradlew testClasses --warn
       timeout-minutes: 4
   
   test:
