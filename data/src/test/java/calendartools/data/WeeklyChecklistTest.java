@@ -189,4 +189,11 @@ public final class WeeklyChecklistTest {
 		}
 	}
 
+	@Test
+	public void testEquals_Null_ReturnsFalse() {
+		assertNotEquals(
+			checklistAllTrue, null
+		);
+	}
+
 }
