@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'temurin'
+          distribution: 'graalvm'
           cache: 'gradle'
 
       - name: Check Build
@@ -39,7 +39,7 @@ jobs:
 
       - name: Upload JavaDoc and Markdown
         uses: actions/upload-artifact@v4
-        if: success() || failure()
+        if: always()
         with:
           name: MT-JavaDocs
           path: /home/runner/work/*/*/*/build/dokka/
