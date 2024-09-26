@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: read
     
     name: CI Run
     steps:
@@ -24,7 +23,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: 17
-        distribution: 'temurin'
+        distribution: 'graalvm'
         cache: 'gradle'
 
     - name: Build Source
