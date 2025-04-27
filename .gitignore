@@ -25,3 +25,10 @@ hs_err_pid*
 .idea/
 /*/build/*
 .gradle/
+local.properties
+
+# File Tree Builder
+.ftb/
+
+# Changelists
+.changelists/
