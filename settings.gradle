@@ -14,4 +14,5 @@ rootProject.name = "calendar-tools"
 include(
 	":map",
 	":data",
+	":yearplanner",
 )
