@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /** The class that helps plan for a given year.
  *  - Date Strings are parsed using a DateFormat instance, optionally provided to constructor.
@@ -15,7 +17,21 @@ public class YearPlanner {
     /** The Recommended DateFormat for Strings.
      */
     public static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
+    
+    /** The reversed Simple DateFormat for Strings.
+     */
+    public static SimpleDateFormat SIMPLE_DATE_REVERSED_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    
+    /** Another DateFormat usable by YearPlanner.
+     */
+    public static SimpleDateFormat MONTH_DAY_FORMAT = new SimpleDateFormat("MM-dd");
+    
+    static {
+        SIMPLE_DATE_FORMAT.setLenient(false);
+        SIMPLE_DATE_REVERSED_FORMAT.setLenient(false);
+        MONTH_DAY_FORMAT.setLenient(false);
+    }
+    
     /** Determine the Day of the Year from the given Calendar Object.
      *  - Note: If Your Calendar object is from a different year, this will work for that year.
      * @param cal The java.util.Calendar object to obtain the Date information from.
@@ -42,7 +58,7 @@ public class YearPlanner {
 
     /** The DateFormat that the Class will use to parse DateString Arguments.
      */
-    public final DateFormat mDateFormat;
+    public final List<DateFormat> mDateFormats;
 
     /** Constructor.
      * @param year The year that this Planner will be used for.
@@ -55,12 +71,12 @@ public class YearPlanner {
             throw new IllegalArgumentException(String.format("Invalid Year: $1%d", year));
         }
         mYear = (short) year;
-        mDateFormat = SIMPLE_DATE_FORMAT;
+        mDateFormats = null;
     }
 
-    /** Constructor with custom DateFormat.
+    /** Constructor with custom DateFormat to apply to DateStrings before the defaults.
      * @param year The year that this Planner will be used for.
-     * @param dateFormat The DateFormat that will be used.
+     * @param dateFormat The DateFormat that will be used first, fallback to YYYY-MM-DD, MM-DD.
      */
     public YearPlanner(
             final int year,
@@ -72,7 +88,35 @@ public class YearPlanner {
             throw new IllegalArgumentException(String.format("Invalid Year: $1%d", year));
         }
         mYear = (short) year;
-        mDateFormat = dateFormat;
+        mDateFormats = List.of(dateFormat);
+    }
+
+    /** Constructor with custom DateFormat List Interface for specifying exactly which DateFormats you want to support.
+     * @param year The year that this Planner will be used for.
+     * @param dateFormat The DateFormat List that will be used when trying to parse a DateString.
+     */
+    public YearPlanner(
+            final int year,
+            final List<DateFormat> dateFormat
+    ) {
+        if (dateFormat == null) throw new IllegalArgumentException();
+        // Validate the Year will fit in a Short integer.
+        if (year > Short.MAX_VALUE || year < Short.MIN_VALUE) {
+            throw new IllegalArgumentException(String.format("Invalid Year: $1%d", year));
+        }
+        mYear = (short) year;
+        mDateFormats = dateFormat;
+    }
+    
+    /** Convert a Date object into a Calendar object, using the Instant as an intermediary.
+     * @param date The Date object to derive information from.
+     * @return A new Calendar object.
+     */
+    public static Calendar convert(final Date date) throws IllegalArgumentException {
+        if (date == null) throw new IllegalArgumentException();
+        return new Calendar.Builder()
+                .setInstant(date)
+                .build();
     }
 
     /** Parse a String containing a Date, using the YearPlanner's DateFormat member.
@@ -81,15 +125,35 @@ public class YearPlanner {
      */
     public Calendar parseDateString(final String dateString) throws IllegalArgumentException {
         if (dateString == null) throw new IllegalArgumentException();
-        try {
-            return new Calendar.Builder()
-                    .setInstant(mDateFormat.parse(dateString))
-                    .build();
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid Date String: " + dateString);
+        Date result = null;
+        if (mDateFormats == null) {
+            result = tryParseSimpleDateFormats(dateString);
+        } else for (var x : mDateFormats) {
+            try {
+                result = x.parse(dateString);
+                break;
+            } catch (ParseException ignored) {}
         }
+        if (result == null) return null;
+        return convert(result);
     }
-
+    
+    /** Parse a Month-Day String into a Calendar object.
+     * @param dateString The String containing the Month-Day (MM-DD) Formatted Date.
+     * @return A new Calendar object, or null if it failed to parse.
+     */
+    public Calendar parseMonthDayString(final String dateString) throws IllegalArgumentException {
+        if (dateString == null) throw new IllegalArgumentException();
+        Date initialDate = null;
+        try {
+            initialDate = MONTH_DAY_FORMAT.parse(dateString);
+        } catch (ParseException ignored) {}
+        if (null == initialDate)
+            return null;
+        initialDate.setYear(mYear - 1900);  // Normalized Year
+        return convert(initialDate);
+    }
+    
     /** Create a new Calendar Instance for the given Month-Day Pair.
      * @param month The Month: Min 1, Max 12.
      * @param day The Day: Min 1, Max 31
@@ -176,5 +240,19 @@ public class YearPlanner {
     ) {
         return !(1 > month || month > 12) && !(1 > day || day > 31);
     }
-
+    
+    /** Try to parse the Date string using the Simple DateFormat first, and then Reversed DateFormat.
+     * @param dateString The Date String to be parsed.
+     * @return The Date object, or null if the method failed to parse.
+     */
+    Date tryParseSimpleDateFormats(final String dateString) {
+        try {
+            return SIMPLE_DATE_FORMAT.parse(dateString);
+        } catch (ParseException ignored) {}
+        try {
+            return SIMPLE_DATE_REVERSED_FORMAT.parse(dateString);
+        } catch (ParseException ignored) {}
+        return null;
+    }
+    
 }
