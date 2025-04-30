@@ -1,6 +1,9 @@
 package calendartools.yearplanner;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** Provider of Test Data.
  */
@@ -19,5 +22,88 @@ public class TestDataProvider {
     public static final Calendar LastDayOf2025 = new Calendar.Builder()
             .setDate(2025, Calendar.DECEMBER, 31)
             .build();
+    
+    private static TestDataProvider mCurrentYearCachedProvider = null;
 
+    public static TestDataProvider getCurrentYearProvider() {
+        if (mCurrentYearCachedProvider == null)
+            mCurrentYearCachedProvider = new TestDataProvider(CurrentYear);
+        return mCurrentYearCachedProvider;
+    }
+    
+    /** An Array of Calendar objects, one for each Day of the Year.
+     */
+    private final Calendar[] CalendarArray;
+
+    /** A good subset of the Valid Possibilities for YYYY-MM-DD Format.
+     *  - Array of Length 366, with Strings up to 10 char wide.
+     */
+    private final String[] SimpleDateStringArray;
+
+    /** A good subset of the Valid Possibilities for MM-DD Format.
+     *  - Array of Length 366, with Strings up to 5 char wide.
+     */
+    private final String[] MonthDayStringArray;
+    
+    /** The Year that the TestDataProvider was created for.
+     */
+    public final int mYear;
+    
+    /** Constructor.
+     * @param year The Year that Calendars and DateStrings will be created for.
+     */
+    public TestDataProvider(final int year) {
+        mYear = year;
+        Calendar cal = new Calendar.Builder()
+                .setDate(mYear, Calendar.JANUARY, 1)
+                .build();
+        int dayCount = cal.getActualMaximum(Calendar.DAY_OF_YEAR);
+        CalendarArray = new Calendar[dayCount];
+        SimpleDateStringArray = new String[dayCount];
+        MonthDayStringArray = new String[dayCount];
+        //
+        int index = 0;
+        while (cal.get(Calendar.YEAR) == year) {
+            CalendarArray[index] = (Calendar) cal.clone();
+            SimpleDateStringArray[index] = String.format(
+                    "%d-%d-%d",
+                    year,
+                    cal.get(Calendar.MONTH) + 1,
+                    cal.get(Calendar.DAY_OF_MONTH)
+            );
+            MonthDayStringArray[index] = String.format(
+                    "%d-%d",
+                    cal.get(Calendar.MONTH) + 1,
+                    cal.get(Calendar.DAY_OF_MONTH)
+            );
+            cal.add(Calendar.DATE, 1);
+            index++;
+        }
+        assert CalendarArray[dayCount - 1].get(Calendar.DAY_OF_YEAR) == dayCount;
+        assert !SimpleDateStringArray[dayCount - 1].isEmpty();
+        assert !MonthDayStringArray[dayCount - 1].isEmpty();
+    }
+
+    public List<Calendar> getCalendars() {
+        return Arrays.asList(CalendarArray);
+    }
+
+    public List<String> getSimpleDateStrings() {
+        return Arrays.asList(SimpleDateStringArray);
+    }
+
+    public List<String> getMonthDayStrings() {
+        return Arrays.asList(MonthDayStringArray);
+    }
+    
+    /** The Alternative DateFormat: DD-MM-YYYY
+     * @return List of Strings in Alternative DateFormat, for the Year of the TestDataProvider.
+     */
+    public List<String> getReversedDateStrings() {
+        var str = '-' + Integer.toString(mYear);
+        return Arrays.stream(CalendarArray).map(
+            (c) -> String.format("%d-%d%s", c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, str)
+        ).collect(Collectors.toList());
+    }
+    
 }
