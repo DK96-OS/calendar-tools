@@ -11,6 +11,8 @@ java {
 }
 
 dependencies {
+    api projects.map
+
     testImplementation 'junit:junit:4.13.2'
 }
 
