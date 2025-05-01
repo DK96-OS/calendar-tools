@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import calendartools.map.DateMap;
+
 /** The class that helps plan for a given year.
  *  - Date Strings are parsed using a DateFormat instance, optionally provided to constructor.
  *  - Default SimpleDateFormat: YYYY-MM-DD
@@ -51,7 +53,7 @@ public class YearPlanner {
         if (cal == null) throw new IllegalArgumentException();
         return (byte) cal.get(Calendar.WEEK_OF_YEAR);
     }
-
+    
     /** The Year that this Class will be used for.
      */
     public final short mYear;
@@ -79,8 +81,8 @@ public class YearPlanner {
      * @param dateFormat The DateFormat that will be used first, fallback to YYYY-MM-DD, MM-DD.
      */
     public YearPlanner(
-            final int year,
-            final DateFormat dateFormat
+        final int year,
+        final DateFormat dateFormat
     ) {
         if (dateFormat == null) throw new IllegalArgumentException();
         // Validate the Year will fit in a Short integer.
@@ -96,8 +98,8 @@ public class YearPlanner {
      * @param dateFormat The DateFormat List that will be used when trying to parse a DateString.
      */
     public YearPlanner(
-            final int year,
-            final List<DateFormat> dateFormat
+        final int year,
+        final List<DateFormat> dateFormat
     ) {
         if (dateFormat == null) throw new IllegalArgumentException();
         // Validate the Year will fit in a Short integer.
@@ -106,17 +108,6 @@ public class YearPlanner {
         }
         mYear = (short) year;
         mDateFormats = dateFormat;
-    }
-    
-    /** Convert a Date object into a Calendar object, using the Instant as an intermediary.
-     * @param date The Date object to derive information from.
-     * @return A new Calendar object.
-     */
-    public static Calendar convert(final Date date) throws IllegalArgumentException {
-        if (date == null) throw new IllegalArgumentException();
-        return new Calendar.Builder()
-                .setInstant(date)
-                .build();
     }
 
     /** Parse a String containing a Date, using the YearPlanner's DateFormat member.
@@ -135,7 +126,7 @@ public class YearPlanner {
             } catch (ParseException ignored) {}
         }
         if (result == null) return null;
-        return convert(result);
+        return DateMap.convert(result);
     }
     
     /** Parse a Month-Day String into a Calendar object.
@@ -151,7 +142,7 @@ public class YearPlanner {
         if (null == initialDate)
             return null;
         initialDate.setYear(mYear - 1900);  // Normalized Year
-        return convert(initialDate);
+        return DateMap.convert(initialDate);
     }
     
     /** Create a new Calendar Instance for the given Month-Day Pair.
@@ -160,8 +151,8 @@ public class YearPlanner {
      * @return A new Calendar Instance at the Requested Date.
      */
     public Calendar getCalendar(
-            final int month,
-            final int day
+        final int month,
+        final int day
     ) {
         if (!validate_month_day_pair(month, day)) throw new IllegalArgumentException();
         return new Calendar.Builder()
@@ -185,8 +176,8 @@ public class YearPlanner {
      * @return The Day of the Year.
      */
     public short getDayNumber(
-            final int month,
-            final int day
+        final int month,
+        final int day
     ) throws IllegalArgumentException {
         return getDayNumber(getCalendar(month, day));
     }
@@ -206,8 +197,8 @@ public class YearPlanner {
      * @return The Week of the Year.
      */
     public short getWeekNumber(
-            final int month,
-            final int day
+        final int month,
+        final int day
     ) throws IllegalArgumentException {
         return getWeekNumber(getCalendar(month, day));
     }
@@ -235,8 +226,8 @@ public class YearPlanner {
      * @return True if both values are within their respective valid ranges.
      */
     boolean validate_month_day_pair(
-            final int month,
-            final int day
+        final int month,
+        final int day
     ) {
         return !(1 > month || month > 12) && !(1 > day || day > 31);
     }
