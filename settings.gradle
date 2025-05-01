@@ -16,3 +16,4 @@ include(
 	":data",
 	":yearplanner",
 )
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
