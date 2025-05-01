@@ -8,9 +8,12 @@ import java.util.stream.Collectors;
 /** Provider of Test Data.
  */
 public class TestDataProvider {
-
+    
+    /** This year value is used repeatedly throughout tests.
+     *  - If changed, expect that some tests may fail.
+     */
     public static final short CurrentYear = 2025;
-
+    
     public static final String FirstDayOf2025Str = "2025-01-01";
 
     public static final String LastDayOf2025Str = "2025-12-31";
@@ -52,7 +55,9 @@ public class TestDataProvider {
     /** Constructor.
      * @param year The Year that Calendars and DateStrings will be created for.
      */
-    public TestDataProvider(final int year) {
+    public TestDataProvider(
+        final int year
+    ) {
         mYear = year;
         Calendar cal = new Calendar.Builder()
                 .setDate(mYear, Calendar.JANUARY, 1)
@@ -83,24 +88,35 @@ public class TestDataProvider {
         assert !SimpleDateStringArray[dayCount - 1].isEmpty();
         assert !MonthDayStringArray[dayCount - 1].isEmpty();
     }
-
+    
+    /** One Calendar for each Day of the Year.
+     * @return A List of Calendar objects.
+     */
     public List<Calendar> getCalendars() {
         return Arrays.asList(CalendarArray);
     }
-
+    
+    /** A String for each Day of the Year, in DateFormat: YYYY-MM-DD
+     * @return A List of Strings.
+     */
     public List<String> getSimpleDateStrings() {
         return Arrays.asList(SimpleDateStringArray);
     }
-
+    
+    /** A String for each Day of the Year, in DateFormat: MM-DD
+     * @return A List of Strings.
+     */
     public List<String> getMonthDayStrings() {
         return Arrays.asList(MonthDayStringArray);
     }
     
-    /** The Alternative DateFormat: DD-MM-YYYY
-     * @return List of Strings in Alternative DateFormat, for the Year of the TestDataProvider.
+    /** A String for each Day of the Year, in DateFormat: DD-MM-YYYY
+     *  - Note: This List is generated on every call.
+     *  - Strings are derived from the private CalendarArray member.
+     * @return A List of Strings.
      */
     public List<String> getReversedDateStrings() {
-        var str = '-' + Integer.toString(mYear);
+        final String str = '-' + Integer.toString(mYear);
         return Arrays.stream(CalendarArray).map(
             (c) -> String.format("%d-%d%s", c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, str)
         ).collect(Collectors.toList());

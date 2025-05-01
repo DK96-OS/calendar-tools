@@ -13,13 +13,6 @@ import org.junit.Test;
  */
 public final class TestStaticYearPlanner {
     
-    
-    @Test
-    public void test_Convert_Null_ThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-            () -> YearPlanner.convert(null));
-    }
-    
     @Test
     public void test_GetDayNumber_Null_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class,

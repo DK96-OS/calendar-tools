@@ -7,9 +7,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static calendartools.map.DateMap.convert;
 import static calendartools.yearplanner.TestDataProvider.CurrentYear;
 import static calendartools.yearplanner.YearPlanner.MONTH_DAY_FORMAT;
-import static calendartools.yearplanner.YearPlanner.convert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,8 @@ import java.util.List;
  */
 public final class TestYearPlanner {
     
-    /**
+    /** A Reference to the Data Provider, for Convenience.
+     *  - Reference resets before every test.
      */
     private TestDataProvider provider;
     
@@ -35,8 +36,6 @@ public final class TestYearPlanner {
     private YearPlanner mAlternative;
     
     /** Compare the top 3 Date Attributes between 2 Calendars.
-     * @param a The first Calendar.
-     * @param b The second Calendar.
      * @return True if the Year, Month, and Day of Month attributes match.
      */
     public static boolean matchingCalendarDates(
