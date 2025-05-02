@@ -7,11 +7,13 @@ import static calendartools.yearplanner.YearPlanner.getWeekNumber;
 
 import org.junit.Test;
 
+import calendartools.data.TestDataProvider;
+
 /** Testing The Static Methods in the YearPlanner Class File.
  *  - Static Methods in YearPlanner accept the java.util.Calendar object as a parameter.
  *  - DateFormat Strings and Month-Day pairs are handled by YearPlanner Instance Methods.
  */
-public final class TestStaticYearPlanner {
+public final class YearPlannerStaticTest {
     
     @Test
     public void test_GetDayNumber_Null_ThrowsIllegalArgumentException() {
