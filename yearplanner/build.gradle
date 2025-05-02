@@ -14,6 +14,7 @@ dependencies {
     api projects.map
 
     testImplementation 'junit:junit:4.13.2'
+    testImplementation(testFixtures(project(":data")))
 }
 
 publishing {
