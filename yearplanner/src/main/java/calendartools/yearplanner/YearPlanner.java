@@ -1,11 +1,9 @@
 package calendartools.yearplanner;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import calendartools.map.DateMap;
 
@@ -57,11 +55,11 @@ public class YearPlanner {
     /** The Year that this Class will be used for.
      */
     public final short mYear;
-
-    /** The DateFormat that the Class will use to parse DateString Arguments.
+    
+    /** The Mapping that will be used to Parse DateStrings.
      */
-    public final List<DateFormat> mDateFormats;
-
+    public final DateMap mDateMap;
+    
     /** Constructor.
      * @param year The year that this Planner will be used for.
      */
@@ -73,60 +71,24 @@ public class YearPlanner {
             throw new IllegalArgumentException(String.format("Invalid Year: $1%d", year));
         }
         mYear = (short) year;
-        mDateFormats = null;
+        mDateMap = DateMap.getDefaultMap();
     }
 
     /** Constructor with custom DateFormat to apply to DateStrings before the defaults.
      * @param year The year that this Planner will be used for.
-     * @param dateFormat The DateFormat that will be used first, fallback to YYYY-MM-DD, MM-DD.
+     * @param dateMap The DateMap to use to parse Strings.
      */
     public YearPlanner(
         final int year,
-        final DateFormat dateFormat
+        final DateMap dateMap
     ) {
-        if (dateFormat == null) throw new IllegalArgumentException();
+        if (dateMap == null) throw new IllegalArgumentException();
         // Validate the Year will fit in a Short integer.
         if (year > Short.MAX_VALUE || year < Short.MIN_VALUE) {
             throw new IllegalArgumentException(String.format("Invalid Year: $1%d", year));
         }
         mYear = (short) year;
-        mDateFormats = List.of(dateFormat);
-    }
-
-    /** Constructor with custom DateFormat List Interface for specifying exactly which DateFormats you want to support.
-     * @param year The year that this Planner will be used for.
-     * @param dateFormat The DateFormat List that will be used when trying to parse a DateString.
-     */
-    public YearPlanner(
-        final int year,
-        final List<DateFormat> dateFormat
-    ) {
-        if (dateFormat == null) throw new IllegalArgumentException();
-        // Validate the Year will fit in a Short integer.
-        if (year > Short.MAX_VALUE || year < Short.MIN_VALUE) {
-            throw new IllegalArgumentException(String.format("Invalid Year: $1%d", year));
-        }
-        mYear = (short) year;
-        mDateFormats = dateFormat;
-    }
-
-    /** Parse a String containing a Date, using the YearPlanner's DateFormat member.
-     * @param dateString The String containing the Date.
-     * @return A new Calendar Instance corresponding to the parsed DateString.
-     */
-    public Calendar parseDateString(final String dateString) throws IllegalArgumentException {
-        if (dateString == null) throw new IllegalArgumentException();
-        Date result = null;
-        if (mDateFormats == null) {
-            result = tryParseSimpleDateFormats(dateString);
-        } else for (var x : mDateFormats) {
-            try {
-                result = x.parse(dateString);
-                break;
-            } catch (ParseException ignored) {}
-        }
-        if (result == null) return null;
-        return DateMap.convert(result);
+        mDateMap = dateMap;
     }
     
     /** Parse a Month-Day String into a Calendar object.
@@ -154,7 +116,8 @@ public class YearPlanner {
         final int month,
         final int day
     ) {
-        if (!validate_month_day_pair(month, day)) throw new IllegalArgumentException();
+        if (!validate_month_day_pair(month, day))
+            throw new IllegalArgumentException();
         return new Calendar.Builder()
                 // Need to Convert to Calendar Months, which start at zero.
                 .setDate(mYear, month - 1, day)
@@ -166,8 +129,7 @@ public class YearPlanner {
      * @return The Day of the Year.
      */
     public short getDayNumber(final String dateString) throws IllegalArgumentException {
-        if (dateString == null) throw new IllegalArgumentException();
-        return getDayNumber(parseDateString(dateString));
+        return getDayNumber(mDateMap.map(dateString));
     }
 
     /** Determine the Day of the Year from month and day.
@@ -187,8 +149,7 @@ public class YearPlanner {
      * @return The Week of the Year.
      */
     public byte getWeekNumber(final String dateString) throws IllegalArgumentException {
-        if (dateString == null) throw new IllegalArgumentException();
-        return getWeekNumber(parseDateString(dateString));
+        return getWeekNumber(mDateMap.map(dateString));
     }
 
     /** Determine the Number of the Week of the Year.
@@ -203,19 +164,38 @@ public class YearPlanner {
         return getWeekNumber(getCalendar(month, day));
     }
 
+    public short getWeekNumber(
+        final int dayOfYear
+    ) throws IllegalArgumentException {
+        var cal = new Calendar.Builder()
+            .setFields(Calendar.YEAR, mYear, Calendar.DAY_OF_YEAR, dayOfYear)
+            .build();
+        return getWeekNumber(cal);
+    }
+    
     /** Obtain an Array containing the Days of the Month for a given Week Number.
      * @param weekNumber The number of the Week.
      * @return A Byte Array containing 7 numbers, from Monday to Sunday.
      */
-    public byte[] getDayArray(final byte weekNumber) throws IllegalArgumentException {
+    public byte[] getDayArray(
+        final byte weekNumber
+    ) throws IllegalArgumentException {
         var cal = new Calendar.Builder()
                 .setFields(Calendar.YEAR, mYear, Calendar.WEEK_OF_YEAR, weekNumber)
                 .build();
         byte[] dayArray = new byte[7];
         dayArray[0] = (byte) cal.get(Calendar.DAY_OF_MONTH);
+        var diff = 0;
         for (byte i = 1; i < 7; i++) {
-            cal.roll(Calendar.DAY_OF_YEAR, 1);
-            dayArray[i] = (byte) cal.get(Calendar.DAY_OF_MONTH);
+            byte inc = (byte) (dayArray[i - 1] + 1);
+            if (inc <= 28) {
+                dayArray[i] = inc;
+                diff++;
+            } else {
+                cal.add(Calendar.DAY_OF_YEAR, diff + 1);
+                diff = 0;
+                dayArray[i] = (byte) cal.get(Calendar.DAY_OF_MONTH);
+            }
         }
         return dayArray;
     }
@@ -230,20 +210,6 @@ public class YearPlanner {
         final int day
     ) {
         return !(1 > month || month > 12) && !(1 > day || day > 31);
-    }
-    
-    /** Try to parse the Date string using the Simple DateFormat first, and then Reversed DateFormat.
-     * @param dateString The Date String to be parsed.
-     * @return The Date object, or null if the method failed to parse.
-     */
-    Date tryParseSimpleDateFormats(final String dateString) {
-        try {
-            return SIMPLE_DATE_FORMAT.parse(dateString);
-        } catch (ParseException ignored) {}
-        try {
-            return SIMPLE_DATE_REVERSED_FORMAT.parse(dateString);
-        } catch (ParseException ignored) {}
-        return null;
     }
     
 }
