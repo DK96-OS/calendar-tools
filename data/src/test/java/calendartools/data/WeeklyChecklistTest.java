@@ -24,7 +24,10 @@ public final class WeeklyChecklistTest {
 	public void testSetup() {
 		checklistAllTrue = new WeeklyChecklist(true);
 		checklistAllFalse = new WeeklyChecklist(false);
-		daysOfWeek = TestDataProvider.getDaysOfWeek();
+		daysOfWeek = new ArrayList<>(7);
+		for (int i = Calendar.SUNDAY; i <= Calendar.SATURDAY; ++i) {
+			daysOfWeek.add(i);
+		}
 	}
 
 	@Test
