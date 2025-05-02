@@ -5,17 +5,17 @@ import java.util.Calendar;
 
 /** A Builder for WeeklyChecklist data.
  */
-public final class WeeklyChecklistBuilder {
+public class WeeklyChecklistBuilder {
 
 	/** Represents the Weekly Checklist with mutable array.
 	 */
-	final boolean[] array = new boolean[7];
+	public final boolean[] array = new boolean[7];
 
 	/** Flip the State of the given DAY_OF_WEEK.
 	 * @param dayOfWeek The DAY_OF_WEEK.
 	 * @throws IllegalArgumentException When the given DAY_OF_WEEK is invalid.
 	 */
-	public void toggle(
+	public final void toggle(
 		int dayOfWeek
 	) throws IllegalArgumentException {
 		if (dayOfWeek < Calendar.SUNDAY ||
@@ -29,7 +29,7 @@ public final class WeeklyChecklistBuilder {
 	/** Obtain a WeeklyChecklist instance matching the builder's current state.
 	 * @return A new WeeklyChecklist.
 	 */
-	public WeeklyChecklist get() {
+	public final WeeklyChecklist get() {
 		return new WeeklyChecklist(
 			array[0],
 			array[1],
@@ -44,7 +44,7 @@ public final class WeeklyChecklistBuilder {
 	/** Clear the Builder's internal representation of the checklist.
 	 * Sets all values to false.
 	 */
-	public void clear() {
+	public final void clear() {
 		Arrays.fill(array, false);
 	}
 
