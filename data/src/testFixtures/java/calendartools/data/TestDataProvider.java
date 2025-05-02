@@ -1,4 +1,4 @@
-package calendartools.yearplanner;
+package calendartools.data;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,34 +15,53 @@ public class TestDataProvider {
     public static final short CurrentYear = 2025;
     
     public static final String FirstDayOf2025Str = "2025-01-01";
-
+    
     public static final String LastDayOf2025Str = "2025-12-31";
-
+    
+    /** Another year value: used to test the leap year case.
+     */
+    public static final short LeapYear = 2024;
+    
+    public static final String LeapYearStr = "2024-02-29";
+    
+    public static final String LeapYearReverseStr = "29-02-2024";
+    
     public static final Calendar FirstDayOf2025 = new Calendar.Builder()
-            .setDate(2025, Calendar.JANUARY, 1)
-            .build();
-
+        .setDate(2025, Calendar.JANUARY, 1)
+        .build();
+    
     public static final Calendar LastDayOf2025 = new Calendar.Builder()
-            .setDate(2025, Calendar.DECEMBER, 31)
-            .build();
+        .setDate(2025, Calendar.DECEMBER, 31)
+        .build();
+    
+    public static final Calendar LeapYearDay = new Calendar.Builder()
+        .setDate(2024, Calendar.FEBRUARY, 29)
+        .build();
     
     private static TestDataProvider mCurrentYearCachedProvider = null;
-
+    
     public static TestDataProvider getCurrentYearProvider() {
         if (mCurrentYearCachedProvider == null)
             mCurrentYearCachedProvider = new TestDataProvider(CurrentYear);
         return mCurrentYearCachedProvider;
     }
     
+    /** Create a new TestDataProvider for the LeapYear 2024.
+     * @return New TestDataProvider Instance, containing multiple String Arrays, and a Calendar Array.
+     */
+    public static TestDataProvider getLeapYearProvider() {
+        return new TestDataProvider(LeapYear);
+    }
+    
     /** An Array of Calendar objects, one for each Day of the Year.
      */
-    private final Calendar[] CalendarArray;
-
+    protected final Calendar[] CalendarArray;
+    
     /** A good subset of the Valid Possibilities for YYYY-MM-DD Format.
      *  - Array of Length 366, with Strings up to 10 char wide.
      */
     private final String[] SimpleDateStringArray;
-
+    
     /** A good subset of the Valid Possibilities for MM-DD Format.
      *  - Array of Length 366, with Strings up to 5 char wide.
      */
@@ -60,8 +79,8 @@ public class TestDataProvider {
     ) {
         mYear = year;
         Calendar cal = new Calendar.Builder()
-                .setDate(mYear, Calendar.JANUARY, 1)
-                .build();
+            .setDate(mYear, Calendar.JANUARY, 1)
+            .build();
         int dayCount = cal.getActualMaximum(Calendar.DAY_OF_YEAR);
         CalendarArray = new Calendar[dayCount];
         SimpleDateStringArray = new String[dayCount];
@@ -71,15 +90,15 @@ public class TestDataProvider {
         while (cal.get(Calendar.YEAR) == year) {
             CalendarArray[index] = (Calendar) cal.clone();
             SimpleDateStringArray[index] = String.format(
-                    "%d-%d-%d",
-                    year,
-                    cal.get(Calendar.MONTH) + 1,
-                    cal.get(Calendar.DAY_OF_MONTH)
+                "%d-%d-%d",
+                year,
+                cal.get(Calendar.MONTH) + 1,
+                cal.get(Calendar.DAY_OF_MONTH)
             );
             MonthDayStringArray[index] = String.format(
-                    "%d-%d",
-                    cal.get(Calendar.MONTH) + 1,
-                    cal.get(Calendar.DAY_OF_MONTH)
+                "%d-%d",
+                cal.get(Calendar.MONTH) + 1,
+                cal.get(Calendar.DAY_OF_MONTH)
             );
             cal.add(Calendar.DATE, 1);
             index++;
@@ -99,14 +118,14 @@ public class TestDataProvider {
     /** A String for each Day of the Year, in DateFormat: YYYY-MM-DD
      * @return A List of Strings.
      */
-    public List<String> getSimpleDateStrings() {
+    public final List<String> getSimpleDateStrings() {
         return Arrays.asList(SimpleDateStringArray);
     }
     
     /** A String for each Day of the Year, in DateFormat: MM-DD
      * @return A List of Strings.
      */
-    public List<String> getMonthDayStrings() {
+    public final List<String> getMonthDayStrings() {
         return Arrays.asList(MonthDayStringArray);
     }
     
