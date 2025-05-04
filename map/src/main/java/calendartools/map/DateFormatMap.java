@@ -5,13 +5,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /** Mapping java.util.Date Objects.
  */
-public class DateMap {
+public class DateFormatMap {
     
     /** Convert a Date object into a Calendar object, using Instant as an intermediary.
      * @param date The Date object to derive information from.
@@ -45,55 +46,42 @@ public class DateMap {
      */
     public static SimpleDateFormat SIMPLE_REVERSED_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     
-    /** .
-     */
-    public static SimpleDateFormat MONTH_DAY_FORMAT = new SimpleDateFormat("MM-dd");
-    
     static {
         SIMPLE_DATE_FORMAT.setLenient(false);
         SIMPLE_REVERSED_DATE_FORMAT.setLenient(false);
-        MONTH_DAY_FORMAT.setLenient(false);
     }
     
-    private static DateMap DEFAULT_DATE_MAP = null;
+    private static DateFormatMap DEFAULT_DATE_MAP = null;
     
     /** The Default Map checks SimpleDateFormat (YYYY-MM-DD) then, it's Reverse (DD-MM-YYYY).
      * @return The new DateMap object.
      */
-    public static DateMap getDefaultMap() {
+    public static DateFormatMap getDefaultMap() {
         if (DEFAULT_DATE_MAP == null) {
-            DEFAULT_DATE_MAP = new DateMap(
+            DEFAULT_DATE_MAP = new DateFormatMap(
                 List.of(SIMPLE_DATE_FORMAT, SIMPLE_REVERSED_DATE_FORMAT)
             );
         }
         return DEFAULT_DATE_MAP;
     }
     
-    private static DateMap MONTH_DAY_DATE_MAP = null;
-    
-    /** The MonthDay Map checks MonthDay DateFormat (MM-DD).
-     * @return The new DateMap object.
-     */
-    public static DateMap getMonthDayMap() {
-        if (MONTH_DAY_DATE_MAP == null) {
-            MONTH_DAY_DATE_MAP = new DateMap(
-                List.of(MONTH_DAY_FORMAT)
-            );
-        }
-        return MONTH_DAY_DATE_MAP;
-    }
-    
     /** The DateFormats that the Class will use to parse DateString Arguments.
      */
     public final List<DateFormat> mDateFormats;
     
-    public DateMap(
+    /** Constructor for a single DateFormat.
+     * @param dateFormat The object that is used to parse strings containing Date information.
+     */
+    public DateFormatMap(
         final DateFormat dateFormat
     ) {
         mDateFormats = List.of(dateFormat);
     }
     
-    public DateMap(
+    /** Constructor for a list of DateFormat.
+     * @param dateFormatList The list of DateFormat parsers to try on each Date string in the given order.
+     */
+    public DateFormatMap(
         final List<DateFormat> dateFormatList
     ) {
         mDateFormats = dateFormatList;
@@ -116,9 +104,9 @@ public class DateMap {
         return null;
     }
     
-    /** Parse a String containing a Date, using the YearPlanner's DateFormat member.
+    /** Map a DateFormat-compatible String into a Calendar.
      * @param dateString The String containing the Date.
-     * @return A new Calendar Instance corresponding to the parsed DateString.
+     * @return A new Calendar Instance created from the parsed DateString.
      */
     public Calendar map(
         final String dateString
@@ -135,39 +123,30 @@ public class DateMap {
         return convert(result);
     }
     
+    /** Map a List of DateFormat-compatible Strings into a List of Calendar objects.
+     * @param inputDateStrings The Strings containing the Date information.
+     * @return A List of Calendars, which may include null values if the String could not be parsed.
+     */
     public List<Calendar> map(
         final List<String> inputDateStrings
     ) {
+        if (inputDateStrings == null) return Collections.emptyList();
         return inputDateStrings.stream()
             .map(this::map)
             .collect(Collectors.toList());
     }
     
+    /** Map an Array of DateFormat-compatible Strings into a List of Calendar objects.
+     * @param inputDateStrings The Strings containing the Date information.
+     * @return A List of Calendars, which may include null values for Strings that failed to parse.
+     */
     public List<Calendar> map(
         final String[] inputDateStrings
     ) {
+        if (inputDateStrings == null) return Collections.emptyList();
         return Arrays.stream(inputDateStrings)
             .map(this::map)
             .collect(Collectors.toList());
-    }
-    
-    /** Parse a Month-Day String into a Calendar object.
-     * @param dateString The String containing the Month-Day (MM-DD) Formatted Date.
-     * @return A new Calendar object, or null if it failed to parse.
-     */
-    public Calendar parseMonthDayString(
-        final short year,
-        final String dateString
-    ) throws IllegalArgumentException {
-        if (dateString == null) throw new IllegalArgumentException();
-        Date initialDate = null;
-        try {
-            initialDate = MONTH_DAY_FORMAT.parse(dateString);
-        } catch (ParseException ignored) {}
-        if (null == initialDate)
-            return null;
-        initialDate.setYear(year - 1900);  // Normalized Year
-        return convert(initialDate);
     }
     
 }
