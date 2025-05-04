@@ -7,8 +7,15 @@ import java.util.List;
 
 /** Provider of Test Data.
  */
-public class TestDataProvider {
-
+public class TestDataProvider extends calendartools.data.TestDataProvider {
+	
+	/** Constructor.
+	 * @param year The Year that Calendars and DateStrings will be created for.
+	 */
+	public TestDataProvider(int year) {
+		super(year);
+	}
+	
 	/** Target Week 1 is October 16 to 22, 2023.
 	 * @return An Array of Time values.
 	 */
