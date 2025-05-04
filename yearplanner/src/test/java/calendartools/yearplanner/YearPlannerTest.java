@@ -256,6 +256,26 @@ public final class YearPlannerTest {
     }
     
     @Test
+    public void test_GetWeekNumber_FromMonthDayPair_FirstDayOfYear_Returns1() {
+        assertEquals(1, mInstance.getWeekNumber(1, 1));
+    }
+    
+    @Test
+    public void test_GetWeekNumber_FromMonthDayPair_LastDayOfYear_Returns1() {
+        assertEquals(1, mInstance.getWeekNumber(12, 31));
+    }
+    
+    @Test
+    public void test_GetWeekNumber_FromMonthDayPair_LastDayInWeek52_361_Returns1() {
+        assertEquals(52, mInstance.getWeekNumber(12, 27));
+    }
+    
+    @Test
+    public void test_GetWeekNumber_FromMonthDayPair_() {
+        assertEquals(1, mInstance.getWeekNumber(1, 1));
+    }
+    
+    @Test
     public void test_GetWeekNumber_FromDayOfYear_FirstDay_Returns1() {
         assertEquals(1, mInstance.getWeekNumber(1));
     }
