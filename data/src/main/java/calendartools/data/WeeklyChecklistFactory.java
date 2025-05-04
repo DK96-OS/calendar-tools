@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 /** A Builder for WeeklyChecklist data.
  */
-public class WeeklyChecklistBuilder {
+public class WeeklyChecklistFactory {
 
 	/** Represents the Weekly Checklist with mutable array.
 	 */
@@ -13,17 +13,18 @@ public class WeeklyChecklistBuilder {
 
 	/** Flip the State of the given DAY_OF_WEEK.
 	 * @param dayOfWeek The DAY_OF_WEEK.
+	 * @return The new value of the toggled DAY_OF_WEEK.
 	 * @throws IllegalArgumentException When the given DAY_OF_WEEK is invalid.
 	 */
-	public final void toggle(
-		int dayOfWeek
+	public final boolean toggle(
+		final int dayOfWeek
 	) throws IllegalArgumentException {
-		if (dayOfWeek < Calendar.SUNDAY ||
-			dayOfWeek > Calendar.SATURDAY
-		) throw new IllegalArgumentException();
-		// Change to Array Index
-		--dayOfWeek;
-		array[dayOfWeek] = !array[dayOfWeek];
+		if (dayOfWeek < Calendar.SUNDAY || dayOfWeek > Calendar.SATURDAY)
+			throw new IllegalArgumentException("Invalid Day of Week: " + dayOfWeek);
+		final byte index = (byte) (dayOfWeek - 1); // Convert Argument to Array Index
+		final boolean updatedValue = !array[index];
+		array[index] = updatedValue;
+		return updatedValue;
 	}
 
 	/** Obtain a WeeklyChecklist instance matching the builder's current state.
@@ -47,5 +48,16 @@ public class WeeklyChecklistBuilder {
 	public final void clear() {
 		Arrays.fill(array, false);
 	}
-
+	
+	/** Copy the Values from a WeeklyChecklist
+	 * @param checklist The
+	 */
+	public final void fromChecklist(
+		final WeeklyChecklist checklist
+	) {
+		for (byte i = 0; i < 7;) {
+			array[i++] = checklist.getDayOfWeek(i);
+		}
+	}
+	
 }
