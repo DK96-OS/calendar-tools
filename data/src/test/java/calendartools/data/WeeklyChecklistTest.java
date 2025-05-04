@@ -50,7 +50,7 @@ public final class WeeklyChecklistTest {
 
 	@Test
 	public void testConstructor_EachDayChecked() {
-		var builder = new WeeklyChecklistBuilder();
+		var builder = new WeeklyChecklistFactory();
 		for (int day : daysOfWeek) {
 			builder.toggle(day);
 		}
@@ -62,7 +62,7 @@ public final class WeeklyChecklistTest {
 
 	@Test
 	public void testConstructor_NoDayChecked() {
-		var builder = new WeeklyChecklistBuilder();
+		var builder = new WeeklyChecklistFactory();
 		var instance = builder.get();
 		assertEquals(
 			0, instance.mData
@@ -74,7 +74,7 @@ public final class WeeklyChecklistTest {
 		final int[] checkedDays = new int[]{
 			Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.SATURDAY
 		};
-		var builder = new WeeklyChecklistBuilder();
+		var builder = new WeeklyChecklistFactory();
 		for (int day : checkedDays) {
 			builder.toggle(day);
 		}
