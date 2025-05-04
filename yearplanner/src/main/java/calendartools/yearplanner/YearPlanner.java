@@ -116,7 +116,7 @@ public class YearPlanner {
         final int month,
         final int day
     ) {
-        if (!validate_month_day_pair(month, day))
+        if (!validateMonthDayPair(month, day))
             throw new IllegalArgumentException();
         return new Calendar.Builder()
                 // Need to Convert to Calendar Months, which start at zero.
@@ -205,11 +205,13 @@ public class YearPlanner {
      * @param day The Day Integer: Min 1, Max 31.
      * @return True if both values are within their respective valid ranges.
      */
-    boolean validate_month_day_pair(
+    boolean validateMonthDayPair(
         final int month,
         final int day
     ) {
-        return !(1 > month || month > 12) && !(1 > day || day > 31);
+        final boolean isMonthValid = !(1 > month || month > 12);
+        final boolean isDayValid = !(1 > day || day > 31);
+        return isMonthValid && isDayValid;
     }
     
 }
