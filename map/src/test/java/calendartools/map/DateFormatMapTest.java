@@ -59,13 +59,13 @@ public class DateFormatMapTest {
     }
     
     @Test
-    public void test_ConvertDate_Null_ThrowsIllegalArgumentException() {
+    public void test_convert_Date_Null_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class,
             () -> convert((Date) null));
     }
     
     @Test
-    public void test_ConvertDate_Today_ReturnsTodayCalendar() {
+    public void test_convert_Date_Today_ReturnsTodayCalendar() {
         assertTrue(
             matchingCalendarDates(
                 Calendar.getInstance(),
@@ -77,7 +77,7 @@ public class DateFormatMapTest {
     }
     
     @Test
-    public void test_ConvertDate_TargetWeek1_ReturnsTargetWeek() {
+    public void test_convert_Date_TargetWeek1_ReturnsTargetWeek() {
         var inputWeekDates = Arrays.stream(TestDataProvider.getTargetWeek1())
             .mapToObj(Date::new)
             .collect(Collectors.toList());
@@ -95,12 +95,12 @@ public class DateFormatMapTest {
     }
     
     @Test
-    public void test_ConvertCalendar_Null_ThrowsIllegalArgumentException() {
+    public void test_convert_Calendar_Null_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> convert((Calendar) null));
     }
     
     @Test
-    public void test_ConvertCalendar_CurrentTimeInstant_ReturnsDate() {
+    public void test_convert_Calendar_CurrentTimeInstant_ReturnsDate() {
         var currentTime = Instant.now();
         var testCalendarInput = new Calendar.Builder()
             .setInstant(currentTime.toEpochMilli())
@@ -114,7 +114,7 @@ public class DateFormatMapTest {
     }
     
     @Test
-    public void test_ConvertCalendar_TargetWeek1_ReturnsDates() {
+    public void test_convert_Calendar_TargetWeek1_ReturnsDates() {
         var index = 0;
         for (var testCalendarInput: TestDataProvider.getTargetWeek1_Calendars()) {
             matchingDates(
@@ -131,22 +131,28 @@ public class DateFormatMapTest {
     }
     
     @Test
-    public void test_map_List_Null_ReturnsEmptyList() {
-        assertEquals(
-            Collections.emptyList(),
-            mInstance.map((List<String>) null)
-        );
-    }
-    
-    @Test
-    public void test_ParseDateString_SimpleDateStrings_ReturnsCalendar() {
-        for (var x: TestDataProvider.getCurrentYearProvider().getSimpleDateStrings()) {
-            assertNotNull(mInstance.map(x));
+    public void test_map_Instance_SimpleDateStrings_ReturnsCalendars() {
+        var calendars = provider.getCalendars();
+        var index = 0;
+        for (var x: provider.getSimpleDateStrings()) {
+            var result = mInstance.map(x);
+            assertNotNull(result);
+            assertTrue(
+                matchingCalendarDates(result, calendars.get(index++))
+            );
         }
     }
     
     @Test
-    public void test_ParseDateString_ReversedDateStrings_ReturnsCalendars() {
+    public void test_map_Instance_SimpleDateString_ReturnsCalendar() {
+        var result = mInstance.map("2044-10-5");
+        assertEquals(2044, result.get(Calendar.YEAR));
+        assertEquals(Calendar.OCTOBER, result.get(Calendar.MONTH));
+        assertEquals(5, result.get(Calendar.DAY_OF_MONTH));
+    }
+    
+    @Test
+    public void test_map_Instance_ReversedDateStrings_ReturnsCalendars() {
         var calendars = provider.getCalendars();
         var index = 0;
         for (var x: provider.getReversedDateStrings()) {
@@ -159,43 +165,30 @@ public class DateFormatMapTest {
     }
     
     @Test
-    public void test_map_SimpleMonthDayStrings_ReturnsNull() {
+    public void test_map_Instance_MonthDayStrings_ReturnsNull() {
         for (var x: provider.getMonthDayStrings()) {
             assertNull(mInstance.map(x));
         }
     }
     
     @Test
-    public void test_map() {
-        var result = mInstance.map("2044-10-5");
-        assertEquals(2044, result.get(Calendar.YEAR));
-        assertEquals(Calendar.OCTOBER, result.get(Calendar.MONTH));
-        assertEquals(5, result.get(Calendar.DAY_OF_MONTH));
-    }
-    
-    @Test
-    public void test_map_MonthDay_ReturnsNull() {
+    public void test_map_Instance_MonthDayString_ReturnsNull() {
         assertNull(mInstance.map("10-5"));
     }
     
     @Test
-    public void test_TrySimpleDateFormats_Parse_SimpleDateStrings_ReturnsCorrectCalendarDate() {
+    public void test_TryParseSimpleDateFormats_Null_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class,
+            () -> DateFormatMap.tryParseSimpleDateFormats((String) null)
+        );
+    }
+    
+    @Test
+    public void test_TryParseSimpleDateFormats_SimpleDateStrings_ReturnsCorrectCalendarDate() {
         for (var x: provider.getSimpleDateStrings()) {
             var result = DateFormatMap.tryParseSimpleDateFormats(x);
             assertNotNull(result);
         }
-    }
-    
-    @Test
-    public void test_TrySimpleDateFormats_Parse_SimpleMonthDayStrings_ReturnsNull() {
-        for (var x : provider.getMonthDayStrings()) {
-            assertNull(DateFormatMap.tryParseSimpleDateFormats(x));
-        }
-    }
-    
-    @Test
-    public void test_TryParseSimpleDateFormats_MonthDay_ReturnsNull() {
-        assertNull(DateFormatMap.tryParseSimpleDateFormats("1-4"));
     }
     
     @Test
@@ -208,6 +201,50 @@ public class DateFormatMapTest {
                 convert(DateFormatMap.tryParseSimpleDateFormats(x))
             ));
         }
+    }
+    
+    @Test
+    public void test_TryParseSimpleDateFormats_MonthDay_ReturnsNull() {
+        assertNull(DateFormatMap.tryParseSimpleDateFormats("1-4"));
+    }
+    
+    @Test
+    public void test_TryParseSimpleDateFormats_MonthDayStrings_ReturnsNull() {
+        for (var x : provider.getMonthDayStrings()) {
+            assertNull(DateFormatMap.tryParseSimpleDateFormats(x));
+        }
+    }
+    
+    @Test
+    public void test_map_List_Null_ReturnsEmptyList() {
+        assertEquals(
+            Collections.emptyList(),
+            mInstance.map((List<String>) null)
+        );
+    }
+    
+    @Test
+    public void test_map_List_Dates_ReturnsCalendars() {
+        assertEquals(
+            provider.getCalendars(),
+            mInstance.map(provider.getSimpleDateStrings())
+        );
+    }
+    
+    @Test
+    public void test_map_Array_Null_ReturnsEmptyList() {
+        assertEquals(
+            Collections.emptyList(),
+            mInstance.map((String[]) null)
+        );
+    }
+    
+    @Test
+    public void test_map_Array_Dates_ReturnsCalendars() {
+        assertEquals(
+            provider.getCalendars(),
+            mInstance.map(provider.getSimpleDateStrings().toArray(String[]::new))
+        );
     }
     
 }

@@ -1,6 +1,7 @@
 package calendartools.map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
@@ -26,6 +27,20 @@ public class MonthDayDateFormatMapTest {
     public void testSetup() {
         provider = calendartools.data.TestDataProvider.getCurrentYearProvider();
         mInstance = new MonthDayDateFormatMap(TestDataProvider.CurrentYear);
+    }
+    
+    @Test
+    public void testConstructor_InvalidYear_TooLow_ThrowsIllegalArgumentException() {
+        var invalid_year = Short.MIN_VALUE - 1;
+        assertThrows(IllegalArgumentException.class,
+            () -> new MonthDayDateFormatMap(invalid_year));
+    }
+    
+    @Test
+    public void testConstructor_InvalidYear_TooHigh_ThrowsIllegalArgumentException() {
+        var invalid_year = Short.MAX_VALUE + 1;
+        assertThrows(IllegalArgumentException.class,
+            () -> new MonthDayDateFormatMap(invalid_year));
     }
     
     @Test
@@ -87,6 +102,31 @@ public class MonthDayDateFormatMapTest {
         assertEquals(altYear, result.get(Calendar.YEAR));
         assertEquals(Calendar.OCTOBER, result.get(Calendar.MONTH));
         assertEquals(5, result.get(Calendar.DAY_OF_MONTH));
+    }
+    
+    @Test
+    public void testEquals_Instance_Self_ReturnsTrue() {
+        assertTrue(mInstance.equals(mInstance));
+    }
+    
+    @Test
+    public void testEquals_New_SameYear_ReturnsTrue() {
+        assertTrue(mInstance.equals(new MonthDayDateFormatMap(mInstance.year)));
+    }
+    
+    @Test
+    public void testEquals_StringType_ReturnsFalse() {
+        assertFalse(mInstance.equals("IsEqual?"));
+    }
+    
+    @Test
+    public void testEquals_DifferentYear_ReturnsFalse() {
+        assertFalse(mInstance.equals(new MonthDayDateFormatMap(mInstance.year + 1)));
+    }
+    
+    @Test
+    public void testHashCode_ReturnsYear() {
+        assertEquals(TestDataProvider.CurrentYear, mInstance.hashCode());
     }
     
 }
