@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import calendartools.map.DateMap;
+import calendartools.map.DateFormatMap;
 
 /** The class that helps plan for a given year.
  *  - Date Strings are parsed using a DateFormat instance, optionally provided to constructor.
@@ -58,7 +58,7 @@ public class YearPlanner {
     
     /** The Mapping that will be used to Parse DateStrings.
      */
-    public final DateMap mDateMap;
+    public final DateFormatMap mDateMap;
     
     /** Constructor.
      * @param year The year that this Planner will be used for.
@@ -71,24 +71,24 @@ public class YearPlanner {
             throw new IllegalArgumentException(String.format("Invalid Year: $1%d", year));
         }
         mYear = (short) year;
-        mDateMap = DateMap.getDefaultMap();
+        mDateMap = DateFormatMap.getDefaultMap();
     }
 
     /** Constructor with custom DateFormat to apply to DateStrings before the defaults.
      * @param year The year that this Planner will be used for.
-     * @param dateMap The DateMap to use to parse Strings.
+     * @param dateFormatMap The DateMap to use to parse Strings.
      */
     public YearPlanner(
         final int year,
-        final DateMap dateMap
+        final DateFormatMap dateFormatMap
     ) {
-        if (dateMap == null) throw new IllegalArgumentException();
+        if (dateFormatMap == null) throw new IllegalArgumentException();
         // Validate the Year will fit in a Short integer.
         if (year > Short.MAX_VALUE || year < Short.MIN_VALUE) {
             throw new IllegalArgumentException(String.format("Invalid Year: $1%d", year));
         }
         mYear = (short) year;
-        mDateMap = dateMap;
+        mDateMap = dateFormatMap;
     }
     
     /** Parse a Month-Day String into a Calendar object.
@@ -104,7 +104,7 @@ public class YearPlanner {
         if (null == initialDate)
             return null;
         initialDate.setYear(mYear - 1900);  // Normalized Year
-        return DateMap.convert(initialDate);
+        return DateFormatMap.convert(initialDate);
     }
     
     /** Create a new Calendar Instance for the given Month-Day Pair.
