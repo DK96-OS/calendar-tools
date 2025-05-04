@@ -256,6 +256,21 @@ public final class YearPlannerTest {
     }
     
     @Test
+    public void test_GetWeekNumber_FromDayOfYear_FirstDay_Returns1() {
+        assertEquals(1, mInstance.getWeekNumber(1));
+    }
+    
+    @Test
+    public void test_GetWeekNumber_FromDayOfYear_LastDayInWeek52_361_Returns52() {
+        assertEquals(52, mInstance.getWeekNumber(361));
+    }
+    
+    @Test
+    public void test_GetWeekNumber_FromDayOfYear_LastDay_Returns1() {
+        assertEquals(1, mInstance.getWeekNumber(365));
+    }
+    
+    @Test
     public void test_GetDayArray_CurrentYear2025_Week1() {
         var result = mInstance.getDayArray((byte) 1);
         assertArrayEquals(
@@ -289,6 +304,36 @@ public final class YearPlannerTest {
             new byte[]{28, 29, 30, 31, 1, 2, 3},
             result
         );
+    }
+    
+    @Test
+    public void test_ValidateMonthDayPair_ZeroMonth() {
+        assertFalse(mInstance.validateMonthDayPair(0, 1));
+    }
+    
+    @Test
+    public void test_ValidateMonthDayPair_ZeroDay() {
+        assertFalse(mInstance.validateMonthDayPair(1, 0));
+    }
+    
+    @Test
+    public void test_ValidateMonthDayPair_FirstDayOfTheYear_ReturnsTrue() {
+        assertTrue(mInstance.validateMonthDayPair(1, 1));
+    }
+    
+    @Test
+    public void test_ValidateMonthDayPair_LastDayOfTheYear_ReturnsTrue() {
+        assertTrue(mInstance.validateMonthDayPair(12, 31));
+    }
+    
+    @Test
+    public void test_ValidateMonthDayPair_DayTooLarge_ReturnsFalse() {
+        assertFalse(mInstance.validateMonthDayPair(12, 32));
+    }
+    
+    @Test
+    public void test_ValidateMonthDayPair_MonthTooLarge_ReturnsFalse() {
+        assertFalse(mInstance.validateMonthDayPair(13, 31));
     }
     
 }
