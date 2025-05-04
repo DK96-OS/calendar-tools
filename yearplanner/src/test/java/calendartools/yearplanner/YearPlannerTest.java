@@ -14,7 +14,8 @@ import org.junit.Test;
 import java.util.Calendar;
 
 import calendartools.data.TestDataProvider;
-import calendartools.map.DateMap;
+import calendartools.map.DateFormatMap;
+import calendartools.map.MonthDayDateFormatMap;
 
 /** Testing the YearPlanner Class.
  */
@@ -29,9 +30,10 @@ public final class YearPlannerTest {
      */
     private YearPlanner mInstance;
     
-    /** An Alternative DateFormat YearPlanner, also CurrentYear.
+    /** A YearPlanner with a MonthDayDateFormatMap.
+     * - Both Instances are configured to TestDataProvider.CurrentYear.
      */
-    private YearPlanner mAlternative;
+    private YearPlanner monthDayMapInstance;
     
     /** Compare the top 3 Date Attributes between 2 Calendars.
      * @return True if the Year, Month, and Day of Month attributes match.
@@ -51,19 +53,25 @@ public final class YearPlannerTest {
     public void testSetup() {
         provider = TestDataProvider.getCurrentYearProvider();
         mInstance = new YearPlanner(TestDataProvider.CurrentYear);
-        mAlternative = new YearPlanner(TestDataProvider.CurrentYear, DateMap.getMonthDayMap());
+        monthDayMapInstance = new YearPlanner(
+            TestDataProvider.CurrentYear,
+            new MonthDayDateFormatMap(TestDataProvider.CurrentYear)
+        );
     }
     
     @Test
     public void test_InitialCondition() {
         assertEquals(TestDataProvider.CurrentYear, mInstance.mYear);
-        assertEquals(DateMap.getDefaultMap(), mInstance.mDateMap);
+        assertEquals(DateFormatMap.getDefaultMap(), mInstance.mDateMap);
     }
     
     @Test
-    public void test_Alternative_InitialCondition() {
-        assertEquals(TestDataProvider.CurrentYear, mAlternative.mYear);
-        assertEquals(DateMap.getMonthDayMap(), mAlternative.mDateMap);
+    public void test_InitialCondition_MonthDayMap() {
+        assertEquals(TestDataProvider.CurrentYear, monthDayMapInstance.mYear);
+        assertEquals(
+            new MonthDayDateFormatMap(TestDataProvider.CurrentYear),
+            monthDayMapInstance.mDateMap
+        );
     }
     
     @Test
@@ -83,21 +91,21 @@ public final class YearPlannerTest {
     @Test
     public void test_Constructor2_InvalidArg_Year_GreaterThanShortMax_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class,
-            () -> new YearPlanner(Short.MAX_VALUE + 1, DateMap.getDefaultMap())
+            () -> new YearPlanner(Short.MAX_VALUE + 1, DateFormatMap.getDefaultMap())
         );
     }
 
     @Test
     public void test_Constructor2_InvalidArg_Year_LessThanShortMin_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class,
-            () -> new YearPlanner(Short.MIN_VALUE - 1, DateMap.getDefaultMap())
+            () -> new YearPlanner(Short.MIN_VALUE - 1, DateFormatMap.getDefaultMap())
         );
     }
 
     @Test
     public void test_Constructor2_InvalidArg2_Null_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class,
-            () -> new YearPlanner(TestDataProvider.CurrentYear, (DateMap) null)
+            () -> new YearPlanner(TestDataProvider.CurrentYear, (DateFormatMap) null)
         );
     }
     
