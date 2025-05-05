@@ -14,4 +14,6 @@ rootProject.name = "calendar-tools"
 include(
 	":map",
 	":data",
+	":yearplanner",
 )
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

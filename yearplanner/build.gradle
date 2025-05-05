@@ -11,6 +11,8 @@ java {
 }
 
 dependencies {
+    api projects.map
+
     testImplementation 'junit:junit:4.13.2'
     testImplementation(testFixtures(project(":data")))
 }
@@ -19,9 +21,9 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = "io.github.dk96-os.calendar-tools"
-            artifactId = "map"
+            artifactId = "yearplanner"
             apply from: "../artifacts.gradle"
-            version = artifactVersions.map
+            version = artifactVersions.yearplanner
             from components.java
         }
     }

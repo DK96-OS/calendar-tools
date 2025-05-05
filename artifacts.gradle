@@ -1,7 +1,8 @@
-def commonArtifactVersion = "0.2.2"
+def commonArtifactVersion = "0.3"
 ext {
     artifactVersions = [
             data: commonArtifactVersion,
             map: commonArtifactVersion,
+            yearplanner: commonArtifactVersion,
     ]
 }
