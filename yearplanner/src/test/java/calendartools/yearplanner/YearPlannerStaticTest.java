@@ -55,37 +55,37 @@ public final class YearPlannerStaticTest {
     
     @Test
     public void test_GetWeekOffset_2034_ReturnsSunday() {
-        assertEquals(Calendar.SUNDAY, getWeekOffset(2034));
+        assertEquals(Calendar.SUNDAY - 1, getWeekOffset(2034));
     }
     
     @Test
     public void test_GetWeekOffset_2024_ReturnsMonday() {
-        assertEquals(Calendar.MONDAY, getWeekOffset(2024));
+        assertEquals(Calendar.MONDAY - 1, getWeekOffset(2024));
     }
     
     @Test
     public void test_GetWeekOffset_2024_ReturnsTuesday() {
-        assertEquals(Calendar.TUESDAY, getWeekOffset(2030));
+        assertEquals(Calendar.TUESDAY - 1, getWeekOffset(2030));
     }
     
     @Test
     public void test_GetWeekOffset_2025_ReturnsWednesday() {
-        assertEquals(Calendar.WEDNESDAY, getWeekOffset(2025));
+        assertEquals(Calendar.WEDNESDAY - 1, getWeekOffset(2025));
     }
     
     @Test
     public void test_GetWeekOffset_2026_ReturnsThursday() {
-        assertEquals(Calendar.THURSDAY, getWeekOffset(2026));
+        assertEquals(Calendar.THURSDAY - 1, getWeekOffset(2026));
     }
     
     @Test
     public void test_GetWeekOffset_2026_ReturnsFriday() {
-        assertEquals(Calendar.FRIDAY, getWeekOffset(2027));
+        assertEquals(Calendar.FRIDAY - 1, getWeekOffset(2027));
     }
     
     @Test
     public void test_GetWeekOffset_2028_ReturnsSaturday() {
-        assertEquals(Calendar.SATURDAY, getWeekOffset(2028));
+        assertEquals(Calendar.SATURDAY - 1, getWeekOffset(2028));
     }
     
 }
