@@ -155,4 +155,18 @@ public class WeeklyChecklistFactoryTest {
         assertEquals((byte) 0, mWednesday.get().mData);
     }
     
+    @Test
+    public void testOffset_Wednesday_MinValue_ShiftsToMonday() {
+        mWednesday.offset(Integer.MIN_VALUE);
+        assertFalse(mWednesday.toggle(Calendar.MONDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
+    @Test
+    public void testOffset_Wednesday_MaxValue_ShiftsToTuesday() {
+        mWednesday.offset(Integer.MAX_VALUE);
+        assertFalse(mWednesday.toggle(Calendar.TUESDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
 }
