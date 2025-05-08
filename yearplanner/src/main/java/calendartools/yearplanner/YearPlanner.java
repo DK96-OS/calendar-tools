@@ -187,7 +187,7 @@ public class YearPlanner {
     
     /** Obtain an Array containing the Days of the Month for a given Week Number.
      * @param weekNumber The number of the Week.
-     * @return A Byte Array containing 7 numbers, from Monday to Sunday.
+     * @return A Byte Array containing 7 numbers, from Sunday to Saturday.
      */
     public byte[] getDayArray(
         final byte weekNumber
@@ -195,6 +195,41 @@ public class YearPlanner {
         var cal = new Calendar.Builder()
                 .setFields(Calendar.YEAR, mYear, Calendar.WEEK_OF_YEAR, weekNumber)
                 .build();
+        byte[] dayArray = new byte[7];
+        dayArray[0] = (byte) cal.get(Calendar.DAY_OF_MONTH);  // Sunday DayOfMonth
+        var diff = 0;
+        for (byte i = 1; i < 7; i++) {
+            byte inc = (byte) (dayArray[i - 1] + 1);
+            if (inc <= 28) {
+                dayArray[i] = inc;
+                diff++;
+            } else {
+                cal.add(Calendar.DAY_OF_YEAR, diff + 1);
+                diff = 0;
+                dayArray[i] = (byte) cal.get(Calendar.DAY_OF_MONTH);
+            }
+        }
+        return dayArray;
+    }
+    
+    /** Obtain an Array containing the Days of the Month for a given Week Number, with WeekOffset.
+     * @param weekNumber The number of the Week.
+     * @param weekOffset The number of days to offset, such as shifting the week to start on monday (1), or wednesday (3).
+     * @return A Byte Array containing 7 numbers, the week that was requested.
+     */
+    public byte[] getDayArray(
+        final byte weekNumber,
+        final byte weekOffset
+    ) throws IllegalArgumentException {
+        // Week Offset must be between -7 and 7 days.
+        if (-7 > weekOffset || weekOffset > 7)
+            throw new IllegalArgumentException("Invalid WeekOffset: " + weekOffset);
+        var cal = new Calendar.Builder()
+            .setFields(Calendar.YEAR, mYear, Calendar.WEEK_OF_YEAR, weekNumber)
+            .build();   // Currently, Sunday is the DayOfWeek
+        // Shift the Calendar by the Offset
+        cal.add(Calendar.DAY_OF_MONTH, weekOffset);
+        // Create the DayArray, using same process as without the WeekOffset, from here on out.
         byte[] dayArray = new byte[7];
         dayArray[0] = (byte) cal.get(Calendar.DAY_OF_MONTH);
         var diff = 0;
