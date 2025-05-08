@@ -53,15 +53,17 @@ public class YearPlanner {
     }
     
     /** Determine the offset for the start of the given year.
-     *  - Value Range: 1 - 7, corresponding with Calendar.SUNDAY ... Calendar.SATURDAY
+     *  - Value Range: 0 - 6, corresponding with Calendar.SUNDAY ... Calendar.SATURDAY
      * @param year The Year to calculate for.
-     * @return The Day of Week that the year starts on. See Calendar.SUNDAY, etc.
+     * @return The Offset from a week that starts on Sunday, because Sunday is lowest Calendar constant.
      */
     public static byte getWeekOffset(final int year) {
-        Calendar cal = new Calendar.Builder()
+        final int dayOfWeek = new Calendar.Builder()
             .setFields(Calendar.YEAR, year, Calendar.DAY_OF_YEAR, 1)
-            .build();
-        return (byte) cal.get(Calendar.DAY_OF_WEEK);
+            .build()
+            .get(Calendar.DAY_OF_WEEK);
+        // If the Day of Week is Sunday, the Offset is zero.
+        return (byte) (dayOfWeek - 1);
     }
     
     /** The Year that this Class will be used for.
