@@ -1,11 +1,14 @@
 package calendartools.data;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Calendar;
 
 public class WeeklyChecklistFactoryTest {
     
@@ -21,12 +24,18 @@ public class WeeklyChecklistFactoryTest {
      */
     WeeklyChecklist allTrue;
     
+    /** A WeeklyChecklist Factory with only Wednesday set to True.
+     */
+    WeeklyChecklistFactory mWednesday;
+    
     @Before
     public void testSetup() {
         mInstance = new WeeklyChecklistFactory();
         allTrue = new WeeklyChecklist(true);
         allTrueInstance = new WeeklyChecklistFactory();
         allTrueInstance.fromChecklist(allTrue);
+        mWednesday = new WeeklyChecklistFactory();
+        mWednesday.toggle(Calendar.WEDNESDAY);
     }
     
     @Test
@@ -40,6 +49,17 @@ public class WeeklyChecklistFactoryTest {
     public void testToggle_AllTrue_7Days_ReturnsFalseAll7() {
         for (byte i = 1; i < 8; i++) {
             assertFalse(allTrueInstance.toggle(i));
+        }
+    }
+    
+    @Test
+    public void testToggle_Wednesday_7Days_ReturnsFalseOnWednesday() {
+        for (byte i = 1; i < 8; i++) {
+            if (i == Calendar.WEDNESDAY) {
+                assertFalse(mWednesday.toggle(i));
+            } else {
+                assertTrue(mWednesday.toggle(i));
+            }
         }
     }
     
@@ -64,11 +84,75 @@ public class WeeklyChecklistFactoryTest {
     }
     
     @Test
+    public void testClear_Wednesday() {
+        mWednesday.clear();
+        for (byte i = 0; i < 7; i++) {
+            assertFalse(mInstance.array[i]);
+        }
+    }
+    
+    @Test
     public void testClear_AllTrue() {
         allTrueInstance.clear();
         for (byte i = 0; i < 7; i++) {
             assertFalse(allTrueInstance.array[i]);
         }
+    }
+    
+    @Test
+    public void testOffset_Wednesday_1_ShiftsToTuesday() {
+        mWednesday.offset(1);
+        assertFalse(mWednesday.toggle(Calendar.TUESDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
+    @Test
+    public void testOffset_Wednesday_2_ShiftsToMonday() {
+        mWednesday.offset(2);
+        assertFalse(mWednesday.toggle(Calendar.MONDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
+    @Test
+    public void testOffset_Wednesday_10_ShiftsToSunday() {
+        mWednesday.offset(10);
+        assertFalse(mWednesday.toggle(Calendar.SUNDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
+    @Test
+    public void testOffset_Wednesday_Negative1_ShiftsToThursday() {
+        mWednesday.offset(-1);
+        assertFalse(mWednesday.toggle(Calendar.THURSDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
+    @Test
+    public void testOffset_Wednesday_Negative2_ShiftsToFriday() {
+        mWednesday.offset(-2);
+        assertFalse(mWednesday.toggle(Calendar.FRIDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
+    @Test
+    public void testOffset_Wednesday_6_ShiftsToThursday() {
+        mWednesday.offset(6);
+        assertFalse(mWednesday.toggle(Calendar.THURSDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
+    @Test
+    public void testOffset_Wednesday_7_DoesNothing() {
+        mWednesday.offset(7);
+        assertFalse(mWednesday.toggle(Calendar.WEDNESDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
+    }
+    
+    @Test
+    public void testOffset_Wednesday_0_DoesNothing() {
+        mWednesday.offset(0);
+        assertFalse(mWednesday.toggle(Calendar.WEDNESDAY));
+        assertEquals((byte) 0, mWednesday.get().mData);
     }
     
 }
