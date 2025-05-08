@@ -327,6 +327,71 @@ public final class YearPlannerTest {
     }
     
     @Test
+    public void test_GetDayArray_CurrentYear2025_Week0() {
+        var result = mInstance.getDayArray((byte) 0);
+        assertArrayEquals(
+            new byte[]{22, 23, 24, 25, 26, 27, 28},
+            result
+        );
+    }
+    
+    @Test
+    public void test_GetDayArray_CurrentYear2025_WeekNegative1() {
+        byte val = 0;
+        val -= 1;
+        var result = mInstance.getDayArray(val);
+        assertArrayEquals(
+            new byte[]{15, 16, 17, 18, 19, 20, 21},
+            result
+        );
+    }
+    
+    @Test
+    public void test_GetDayArray_Offset1_CurrentYear2025_Week1() {
+        var result = mInstance.getDayArray((byte) 1, (byte) 1);
+        assertArrayEquals(
+            new byte[]{30, 31, 1, 2, 3, 4, 5},
+            result
+        );
+    }
+    
+    @Test
+    public void test_GetDayArray_Offset1_CurrentYear2025_Week18() {
+        var result = mInstance.getDayArray((byte) 18, (byte) 1);
+        assertArrayEquals(
+            new byte[]{28, 29, 30, 1, 2, 3, 4},
+            result
+        );
+    }
+    
+    @Test
+    public void test_GetDayArray_Offset3_CurrentYear2025_Week18() {
+        var result = mInstance.getDayArray((byte) 18, (byte) 3);
+        assertArrayEquals(
+            new byte[]{30, 1, 2, 3, 4, 5, 6},
+            result
+        );
+    }
+    
+    @Test
+    public void test_GetDayArray_Offset4_CurrentYear2025_Week18() {
+        var result = mInstance.getDayArray((byte) 18, (byte) 4);
+        assertArrayEquals(
+            new byte[]{1, 2, 3, 4, 5, 6, 7},
+            result
+        );
+    }
+    
+    @Test
+    public void test_GetDayArray_Offset7_CurrentYear2025_Week18() {
+        var result = mInstance.getDayArray((byte) 18, (byte) 7);
+        assertArrayEquals(
+            new byte[]{4, 5, 6, 7, 8, 9, 10},
+            result
+        );
+    }
+    
+    @Test
     public void test_ValidateMonthDayPair_ZeroMonth() {
         assertFalse(mInstance.validateMonthDayPair(0, 1));
     }
