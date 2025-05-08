@@ -69,7 +69,7 @@ public class WeeklyChecklistFactory {
 	public void offset(int offset) {
 		boolean reverse = offset < 0;
 		if (reverse) {
-			offset = (offset == Integer.MIN_VALUE) ? Integer.MAX_VALUE : -offset;
+			offset = (offset == Integer.MIN_VALUE) ? 5 : -offset;
 		}
 		// Normalize the Offset
 		if (offset >= 7) {offset %= 7;}
