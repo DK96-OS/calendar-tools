@@ -193,7 +193,7 @@ public class YearPlanner {
      */
     public byte[] getDayArray(
         final byte weekNumber
-    ) throws IllegalArgumentException {
+    ) {
         var cal = new Calendar.Builder()
                 .setFields(Calendar.YEAR, mYear, Calendar.WEEK_OF_YEAR, weekNumber)
                 .build();
@@ -216,21 +216,18 @@ public class YearPlanner {
     
     /** Obtain an Array containing the Days of the Month for a given Week Number, with WeekOffset.
      * @param weekNumber The number of the Week.
-     * @param weekOffset The number of days to offset, such as shifting the week to start on monday (1), or wednesday (3).
+     * @param weekdayOffset The number of days to offset, such as shifting the week to start on monday (1), or wednesday (3).
      * @return A Byte Array containing 7 numbers, the week that was requested.
      */
     public byte[] getDayArray(
         final byte weekNumber,
-        final byte weekOffset
-    ) throws IllegalArgumentException {
-        // Week Offset must be between -7 and 7 days.
-        if (-7 > weekOffset || weekOffset > 7)
-            throw new IllegalArgumentException("Invalid WeekOffset: " + weekOffset);
+        final byte weekdayOffset
+    ) {
         var cal = new Calendar.Builder()
             .setFields(Calendar.YEAR, mYear, Calendar.WEEK_OF_YEAR, weekNumber)
             .build();   // Currently, Sunday is the DayOfWeek
         // Shift the Calendar by the Offset
-        cal.add(Calendar.DAY_OF_MONTH, weekOffset);
+        cal.add(Calendar.DAY_OF_MONTH, weekdayOffset);
         // Create the DayArray, using same process as without the WeekOffset, from here on out.
         byte[] dayArray = new byte[7];
         dayArray[0] = (byte) cal.get(Calendar.DAY_OF_MONTH);
