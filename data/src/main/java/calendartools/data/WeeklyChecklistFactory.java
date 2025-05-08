@@ -60,4 +60,31 @@ public class WeeklyChecklistFactory {
 		}
 	}
 	
+	/** Translate the days of the week by a given offset.
+	 *  - Normalizes the Offset before applying any shift on the data (divides by 7).
+	 *  - An Offset of 1 shifts Monday into first day in the checklist data.
+	 *  - Negative 1 Offset shifts Saturday into the first day.
+	 * @param offset The offset to be applied to the weekly checklist data.
+	 */
+	public void offset(int offset) {
+		boolean reverse = offset < 0;
+		if (reverse) {
+			offset = (offset == Integer.MIN_VALUE) ? Integer.MAX_VALUE : -offset;
+		}
+		// Normalize the Offset
+		if (offset >= 7) {offset %= 7;}
+		// Zero Offset has no effect
+		if (offset == 0) return;
+		// A Reverse direction shift is the same as this
+		if (reverse)
+			offset = 7 - offset;
+		// Copy Array segments before overwriting
+		var seg0 = Arrays.copyOfRange(array, 0, offset);
+		var seg6 = Arrays.copyOfRange(array, offset, 7);
+		// Overwrite the array from the two segments
+		for (byte i = 0; i < array.length; i++) {
+			array[i] = (i < seg6.length) ? seg6[i]: seg0[i - seg6.length];
+		}
+	}
+	
 }
